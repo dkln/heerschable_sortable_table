@@ -1,4 +1,4 @@
-module HeerschendeTable
+module HeerschableTable
   module ActionController
     module Base
       module ClassMethods

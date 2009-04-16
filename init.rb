@@ -1,2 +1,2 @@
-ActionController::Base.send(:include, HeerschendeTable::ActionController::Base::InstanceMethods)
-ActionController::Base.send(:extend, HeerschendeTable::ActionController::Base::ClassMethods)
+ActionController::Base.send(:include, HeerschableTable::ActionController::Base::InstanceMethods)
+ActionController::Base.send(:extend, HeerschableTable::ActionController::Base::ClassMethods)
