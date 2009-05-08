@@ -1,4 +1,57 @@
 module HeerschableTable
+  module ActionView
+    def table_header(name, column, opts = {}, table_id = 'default')
+      anchor = opts[:anchor].blank? ? '' : "##{opts[:anchor]}"
+
+      if(opts[:updatee])
+        link = link_to_remote(  name,
+                                :url => table_header_url(table_id, column) + anchor,
+                                :method => :get,
+                                :title => opts[:title],
+                                :update => opts[:update] )
+      else
+        link = link_to( name,
+                        table_header_url(table_id, column) + anchor,
+                        :title => opts[:title] )
+      end
+
+      content_tag(:th, link, :class => table_header_classes(table_id, column, opts))
+    end
+
+    def table_header_url(table_id, column)
+      url_for(params.merge("#{table_id}_sort_column" => column, "#{table_id}_sort_order" => table_header_order(table_id, column), :page => 1))
+    end
+
+    def reverse_order(order)
+      order == 'asc' ? 'desc' : 'asc'
+    end
+
+    def table_header_order(table_id, column)
+      if(column == controller.selected_column(table_id))
+        reverse_order(controller.selected_order_direction(table_id))
+      else
+        'asc'
+      end
+    end
+
+    def table_header_class(table_id, column)
+      if(column == controller.selected_column(table_id))
+        if(controller.selected_order_direction == 'asc')
+          'desc'
+        else
+          'asc'
+        end
+      end
+    end
+
+    def table_header_classes(table_id, column, opts)
+      class_names = []
+      class_names << table_header_class(table_id, column)
+      class_names << opts[:class]
+      class_names.compact.blank? ? nil : class_names.compact.join(' ')
+    end
+  end
+
   module ActionController
     module Base
       module ClassMethods
@@ -51,18 +104,15 @@ module HeerschableTable
 
       module InstanceMethods
         def selected_order_direction(table_id = 'default')
-          if(table_param(table_id, 'sort_order') %w(ascending descending).include?(table_param(table_id, 'sort_order')))
+          if(table_param(table_id, 'sort_order') and %w(asc desc).include?(table_param(table_id, 'sort_order')))
             table_param(table_id, 'sort_order')
           else
             unless(self.class.column_defaults[table_id].empty? and self.class.column_defaults[table_id][selected_column(table_id)])
               self.class.column_defaults[table_id][selected_column(table_id)]
             else
-              'ascending'
+              'asc'
             end
           end
-        end
-
-        def sort_method(table_id = 'default')
         end
 
         def selected_column(table_id = 'default')
@@ -75,6 +125,10 @@ module HeerschableTable
               self.class.column_mapping[table_id].values.first
             end
           end
+        end
+
+        def sorting(table_id = 'default')
+          "#{self.class.column_mapping[table_id][selected_column(table_id)]} #{selected_order_direction(table_id)}"
         end
 
         private
