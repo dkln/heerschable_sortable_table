@@ -3,7 +3,7 @@ module HeerschableTable
     def table_header(name, column, opts = {}, table_id = 'default')
       anchor = opts[:anchor].blank? ? '' : "##{opts[:anchor]}"
 
-      if(opts[:updatee])
+      if(opts[:update])
         link = link_to_remote(  name,
                                 :url => table_header_url(table_id, column) + anchor,
                                 :method => :get,
