@@ -1,0 +1,92 @@
+= Heerschable Table
+
+The Heerschable Table plugin provides a simple way for creating sortable tables.
+It is slightly based on the Thoughtbot sortable table plugin.
+
+== Installation
+
+  script/plugin install git://github.com/dkln/heerschable_table.git
+
+And done!
+
+
+== Basic usage
+
+Specify in your controller which columns you want to sort. This can be
+achieved by using the +sortable_column+ class method:
+
+  class FooBar < ActionController::Base
+    sortable_column :name, :id, :updated_at, :email
+
+    def index
+      @users = User.find(:all, :order => sorting)
+    end
+
+Use the method +sorting+ if you want to retrieve the current column plus sort method.
+
+== Alias
+
+You can alias columns by ommiting a simple hash:
+
+  sortable_column :name, :mail => 'email'
+
+== Rendering table headers
+
+With the helper +table_header+ you can render your table headers.
+
+  table_header 'Fullname', :name
+  table_header 'Updated at', :updated_at
+  table_header 'Email address', :mail
+
+=== Ajax tables
+
+Ajax tables are more fun than boring simple tables. Why? because you
+don't need a page refresh and it just "feels" much more responsive.
+
+As always in Rails, it is a bit of a no brainer. If we would have
+a bunch of users, we could do something like this in +index.html.haml+:
+
+  = render(:partial => 'users')
+
+And in +_users.html.haml+:
+
+  #users
+    %table
+      %tr
+        = table_header 'Fullname', :name, :update => 'users'
+        = table_header 'Email address', :mail, :update => 'users'
+
+And finally, in your controller:
+
+  def index
+    @users = User.find(:all, :order => sorting)
+
+    respond_to do |f|
+      f.html
+      f.js { render(:partial => 'users') }
+    end
+  end
+
+Done!
+
+== More than one table?
+
+Is there more than one table on your page? No worries. Just specify a
+table id
+
+  sortable_column :name, :updated_at, :id => 'users'
+  sortable_column :description, :code, :id => 'activities'
+
+  ..
+
+  @users = User.find(:all, :order => sorting(:users)
+
+In your view you will now need to specify the correct id:
+
+  = table_header 'Fullname', :name, { :update => 'users' }, 'users'
+
+== Credits ==
+Use it, send it to your mom, throw it away or extend it will cool new 
+stuff. Just stick to the rules of the MIT license :)
+
+Copyright (c) 2009 Diederick Lawson, released under the MIT license
