@@ -44,11 +44,11 @@ Ajax tables are more fun than boring simple tables. Why? because you
 don't need a page refresh and it just "feels" much more responsive.
 
 As always in Rails, it is a bit of a no brainer. If we would have
-a bunch of users, we could do something like this in +index.html.haml+:
+a bunch of users, we could do something like this in _index.html.haml_:
 
   = render(:partial => 'users')
 
-And in +_users.html.haml+:
+And in _\_users.html.haml_:
 
   #users
     %table
@@ -69,12 +69,31 @@ And finally, in your controller:
 
 Done!
 
+== Default columns
+
+If you have a default column in your table, do this:
+
+  default_sorted_column :name => 'asc'
+
+This means that the +name+ column will be sorted by default. The
+default sort method for this column is ascending.
+
+You can also specify default column sorting methods for every column
+in your table:
+
+  default_sorted_column :name => 'asc, :email => 'desc'
+
+Remember that the first ommited key (+name+ in this example) will be
+the default sorting for the table when an user enters the page.
+
 == More than one table?
 
 Is there more than one table on your page? No worries. Just specify a
 table id
 
   sortable_column :name, :updated_at, :id => 'users'
+  default_sorted_column :name => 'asc', :id => 'users'
+
   sortable_column :description, :code, :id => 'activities'
 
   ..
@@ -85,7 +104,7 @@ In your view you will now need to specify the correct id:
 
   = table_header 'Fullname', :name, { :update => 'users' }, 'users'
 
-== Credits ==
+== Credits
 Use it, send it to your mom, throw it away or extend it will cool new 
 stuff. Just stick to the rules of the MIT license :)
 
