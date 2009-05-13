@@ -1,4 +1,4 @@
-module HeerschableTable
+module HeerschableSortableTable
   module ActionView
     def table_header(name, column, opts = {}, table_id = 'default')
       anchor = opts[:anchor].blank? ? '' : "##{opts[:anchor]}"
