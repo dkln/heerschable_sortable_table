@@ -16,7 +16,7 @@ Specify in your controller which columns you want to sort. This can be
 achieved by using the +sortable_column+ class method:
 
   class FooBar < ActionController::Base
-    sortable_column :name, :id, :updated_at, :email
+    sortable_columns :name, :id, :updated_at, :email
 
     def index
       @users = User.find(:all, :order => sorting)
@@ -28,7 +28,7 @@ Use the method +sorting+ if you want to retrieve the current column plus sort me
 
 You can alias columns by ommiting a simple hash:
 
-  sortable_column :name, :mail => 'email'
+  sortable_columns :name, :mail => 'email'
 
 == Rendering table headers
 
@@ -91,10 +91,10 @@ the default sorting for the table when an user enters the page.
 Is there more than one table on your page? No worries. Just specify a
 table id
 
-  sortable_column :name, :updated_at, :id => 'users'
+  sortable_columns :name, :updated_at, :id => 'users'
   default_sorted_column :name => 'asc', :id => 'users'
 
-  sortable_column :description, :code, :id => 'activities'
+  sortable_columns :description, :code, :id => 'activities'
 
   ..
 

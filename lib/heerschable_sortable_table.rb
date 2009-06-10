@@ -38,7 +38,7 @@ module HeerschableSortableTable
     end
 
     def table_header_order(table_id, column)
-      if(column == controller.selected_column(table_id))
+      if(column.to_s == controller.selected_column(table_id).to_s)
         reverse_order(controller.selected_order_direction(table_id))
       else
         'asc'
@@ -46,7 +46,7 @@ module HeerschableSortableTable
     end
 
     def table_header_class(table_id, column)
-      if(column == controller.selected_column(table_id))
+      if(column.to_s == controller.selected_column(table_id).to_s)
         if(controller.selected_order_direction == 'asc')
           'desc'
         else
@@ -115,10 +115,13 @@ module HeerschableSortableTable
 
       module InstanceMethods
         def selected_order_direction(table_id = 'default')
-          if(table_param(table_id, 'sort_order') and %w(asc desc).include?(table_param(table_id, 'sort_order')))
+          if( table_param(table_id, 'sort_order') and
+              %w(asc desc).include?(table_param(table_id, 'sort_order')) )
             table_param(table_id, 'sort_order')
           else
-            unless(self.class.column_defaults[table_id].empty? and self.class.column_defaults[table_id][selected_column(table_id)])
+            unless( self.class.column_defaults and
+                    self.class.column_defaults[table_id].empty? and
+                    self.class.column_defaults[table_id][selected_column(table_id)] )
               self.class.column_defaults[table_id][selected_column(table_id)]
             else
               'asc'
@@ -127,10 +130,13 @@ module HeerschableSortableTable
         end
 
         def selected_column(table_id = 'default')
-          if(table_param(table_id, 'sort_column') and self.class.column_mapping[table_id][table_param(table_id, 'sort_column')])
+          if( table_param(table_id, 'sort_column') and
+              self.class.column_mapping[table_id][table_param(table_id, 'sort_column')] )
             table_param(table_id, 'sort_column')
           else
-            unless(not self.class.column_defaults[table_id] and self.class.column_defaults[table_id].empty?)
+            unless( self.class.column_defaults and
+                    not self.class.column_defaults[table_id] and
+                    self.class.column_defaults[table_id].empty? )
               self.class.column_mapping[table_id][self.class.column_defaults[table_id].keys.first]
             else
               self.class.column_mapping[table_id].values.first
