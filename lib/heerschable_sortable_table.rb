@@ -3,12 +3,12 @@ module HeerschableSortableTable
     def table_header(name, column, opts = {}, table_id = 'default')
       anchor = opts[:anchor].blank? ? '' : "##{opts[:anchor]}"
 
-      if(opts[:update])
-        link = link_to_remote(  name,
-                                :url => table_header_url(table_id, column) + anchor,
-                                :method => :get,
-                                :title => opts[:title],
-                                :update => opts[:update] )
+      if(opts[:update] or opts[:remote])
+        opts[:url] = table_header_url(table_id, column) + anchor
+        opts[:method] = :get
+        opts[:title] = opts[:title]
+
+        link = link_to_remote(name, opts)
       else
         link = link_to( name,
                         table_header_url(table_id, column) + anchor,
@@ -20,6 +20,17 @@ module HeerschableSortableTable
 
     def table_header_url(table_id, column)
       url_for(params.merge("#{table_id}_sort_column" => column, "#{table_id}_sort_order" => table_header_order(table_id, column), :page => 1))
+    end
+
+    def selected_table_header_params(table_ids = ['default'])
+      params = {}
+
+      table_ids.each do |id|
+        params["#{id}_sort_column"] = controller.selected_column(id)
+        params["#{id}_sort_order"] = controller.selected_order_direction(id)
+      end
+
+      params
     end
 
     def reverse_order(order)
@@ -119,7 +130,7 @@ module HeerschableSortableTable
           if(table_param(table_id, 'sort_column') and self.class.column_mapping[table_id][table_param(table_id, 'sort_column')])
             table_param(table_id, 'sort_column')
           else
-            unless(self.class.column_defaults[table_id].empty? and self.class.column_defaults[table_id].empty?)
+            unless(not self.class.column_defaults[table_id] and self.class.column_defaults[table_id].empty?)
               self.class.column_mapping[table_id][self.class.column_defaults[table_id].keys.first]
             else
               self.class.column_mapping[table_id].values.first
